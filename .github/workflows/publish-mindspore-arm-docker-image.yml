@@ -1,4 +1,4 @@
-name: Publish MindSpore OpenAI Competible Server Docker image
+name: Publish ARM MindSpore OpenAI Competible Server Docker image
 
 on:
   release:
