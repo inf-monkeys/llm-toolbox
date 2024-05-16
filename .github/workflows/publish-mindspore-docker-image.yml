@@ -36,7 +36,7 @@ jobs:
       - name: Save Docker image to a tar file
         run: |
           RELEASE_TAG=${GITHUB_REF#refs/tags/}
-          docker save infmonkeys/monkeys:$RELEASE_TAG -o monkeys-$RELEASE_TAG.tar.gz
+          docker save infmonkeys/mindspore-openai-competible-server:$RELEASE_TAG -o mindspore-openai-competible-server-$RELEASE_TAG.tar.gz
 
       - name: Install TOS CLI And Upload to Tos
         env:
@@ -49,4 +49,4 @@ jobs:
           RELEASE_TAG=${GITHUB_REF#refs/tags/}
           wget https://tos-tools.tos-cn-beijing.volces.com/linux/tosutil && chmod a+x tosutil
           ./tosutil config -i "$TOS_ACCESS_KEY_ID" -k "$TOS_SECRET_ACCESS_KEY" -e "$TOS_ENDPOINT_URL" -re "$TOS_REGION" 
-          ./tosutil cp monkeys-$RELEASE_TAG.tar.gz tos://$TOS_BUCKET/docker/monkeys/monkeys/monkeys-$RELEASE_TAG.tar.gz
+          ./tosutil cp mindspore-openai-competible-server-$RELEASE_TAG.tar.gz tos://$TOS_BUCKET/docker/monkeys/mindspore-openai-competible-server/mindspore-openai-competible-server-$RELEASE_TAG.tar.gz
