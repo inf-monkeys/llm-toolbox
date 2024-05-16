@@ -1,0 +1,15 @@
+mindspore:
+  host: http://host.docker.internal:61170
+  model: baichuan2
+  parameters:
+    do_sample: "False"
+    top_p: "0.8"
+    top_k: "1"
+    return_full_text: "True"
+
+  # chatCompletionsConvert:
+  #   template: "用户: {userMessage}\nBaichuan 2: {assistantMessage}\n"
+
+  chatCompletionsConvert:
+    prepend: "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\nYou are a helpful assistant.<|eot_id|>\n"
+    template: "<|start_header_id|>user<|end_header_id|>{userMessage}<|eot_id|><|start_header_id|>assistant<|end_header_id|>{assistantMessage}<|eot_id|>\n"
