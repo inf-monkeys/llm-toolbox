@@ -36,6 +36,8 @@ jobs:
       - name: Save Docker image to a tar file
         run: |
           RELEASE_TAG=${GITHUB_REF#refs/tags/}
+          echo "RELEASE_TAG: $RELEASE_TAG"
+          docker images
           docker save infmonkeys/mindspore-openai-competible-server:$RELEASE_TAG -o mindspore-openai-competible-server-$RELEASE_TAG.tar.gz
 
       - name: Install TOS CLI And Upload to Tos
