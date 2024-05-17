@@ -26,11 +26,6 @@ if (!mindSporeHost) {
   console.error("Mindspore host is not defined in the config file.");
   process.exit(1);
 }
-const mindSporeModel = config.mindspore?.model;
-if (!mindSporeModel) {
-  console.error("Mindspore model is not defined in the config file.");
-  process.exit(1);
-}
 
 const mindSporeParameters = config.mindspore?.parameters || {
   do_sample: "False",
@@ -70,11 +65,15 @@ const convertMessagesToInputs = (messages) => {
 };
 
 app.post("/v1/chat/completions", async (req, res) => {
-  const { messages, stream = false, max_tokens = 1000 } = req.body;
+  const { messages, stream = false, model, max_tokens = 1000 } = req.body;
+  if (!model) {
+    res.status(400).json({ error: "Model is required." });
+    return;
+  }
   if (stream) {
     res.setHeader("content-type", "text/event-stream");
     res.status(201);
-    const api = `${mindSporeHost}/models/${mindSporeModel}/generate_stream`;
+    const api = `${mindSporeHost}/models/${model}/generate_stream`;
     const body = {
       inputs: convertMessagesToInputs(messages),
       parameters: {
@@ -103,6 +102,22 @@ app.post("/v1/chat/completions", async (req, res) => {
         const { data: chunkData } = chunk;
         const { generated_text, finish_reason } = chunkData[0];
         if (finish_reason === "eos") {
+          const openaiChunkData = {
+            id: randomChatCmplId,
+            object: "chat.completion.chunk",
+            created: Math.floor(Date.now() / 1000),
+            model: model,
+            system_fingerprint: null,
+            choices: [
+              {
+                index: 0,
+                delta: { content: "" },
+                logprobs: null,
+                finish_reason: 'stop',
+              },
+            ],
+          };
+          res.write(`data: ${JSON.stringify(openaiChunkData, null, 0)}\n\n`);
           res.write("data: [DONE]\n\n");
           res.end();
         } else {
@@ -110,7 +125,7 @@ app.post("/v1/chat/completions", async (req, res) => {
             id: randomChatCmplId,
             object: "chat.completion.chunk",
             created: Math.floor(Date.now() / 1000),
-            model: mindSporeModel,
+            model: model,
             system_fingerprint: null,
             choices: [
               {
@@ -130,7 +145,7 @@ app.post("/v1/chat/completions", async (req, res) => {
   } else {
     res.setHeader("content-type", "application/json");
     res.status(201);
-    const api = `${mindSporeHost}/models/${mindSporeModel}/generate`;
+    const api = `${mindSporeHost}/models/${model}/generate`;
     const body = {
       inputs: convertMessagesToInputs(messages),
       parameters: {
@@ -165,7 +180,7 @@ app.post("/v1/chat/completions", async (req, res) => {
       ],
       created: 1715877703,
       id: "chatcmpl-" + Math.random().toString(36).substr(2, 16),
-      model: mindSporeModel,
+      model: model,
       object: "chat.completion",
       system_fingerprint: null,
       usage: {
@@ -179,11 +194,15 @@ app.post("/v1/chat/completions", async (req, res) => {
 });
 
 app.post("/v1/completions", async (req, res) => {
-  const { prompt, stream = false, max_tokens = 1000 } = req.body;
+  const { prompt, stream = false, model, max_tokens = 1000 } = req.body;
+  if (!model) {
+    res.status(400).json({ error: "Model is required." });
+    return;
+  }
   if (stream) {
     res.setHeader("content-type", "text/event-stream");
     res.status(201);
-    const api = `${mindSporeHost}/models/${mindSporeModel}/generate_stream`;
+    const api = `${mindSporeHost}/models/${model}/generate_stream`;
     const body = {
       inputs: prompt,
       parameters: {
@@ -212,6 +231,21 @@ app.post("/v1/completions", async (req, res) => {
         const { data: chunkData } = chunk;
         const { generated_text, finish_reason } = chunkData[0];
         if (finish_reason === "eos") {
+          const openaiChunkData = {
+            id: randomChatCmplId,
+            object: "text_completion",
+            created: Math.floor(Date.now() / 1000),
+            model: model,
+            choices: [
+              {
+                text: "",
+                index: 0,
+                finish_reason: 'stop',
+                logprobs: null,
+              },
+            ],
+          };
+          res.write(`data: ${JSON.stringify(openaiChunkData, null, 0)}\n\n`);
           res.write("data: [DONE]\n\n");
           res.end();
         } else {
@@ -219,7 +253,7 @@ app.post("/v1/completions", async (req, res) => {
             id: randomChatCmplId,
             object: "text_completion",
             created: Math.floor(Date.now() / 1000),
-            model: mindSporeModel,
+            model: model,
             choices: [
               {
                 text: generated_text,
@@ -238,7 +272,7 @@ app.post("/v1/completions", async (req, res) => {
   } else {
     res.setHeader("content-type", "application/json");
     res.status(201);
-    const api = `${mindSporeHost}/models/${mindSporeModel}/generate`;
+    const api = `${mindSporeHost}/models/${model}/generate`;
     const body = {
       inputs: prompt,
       parameters: {
@@ -263,7 +297,7 @@ app.post("/v1/completions", async (req, res) => {
       id:   "chatcmpl-" + Math.random().toString(36).substr(2, 16),
       object: "text_completion",
       created: Math.floor(Date.now() / 1000),
-      model: mindSporeModel,
+      model: model,
       choices: [
         {
           text: generated_text,

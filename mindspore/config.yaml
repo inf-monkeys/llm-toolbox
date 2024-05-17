@@ -1,6 +1,5 @@
 mindspore:
-  host: http://host.docker.internal:61170
-  model: baichuan2
+  host: http://127.0.0.1:61170
   parameters:
     do_sample: "False"
     top_p: "0.8"
