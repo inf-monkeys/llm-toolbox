@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const yaml = require("yaml");
 const axios = require("axios");
-const port = 8000;
+const port = 8001;
 const fs = require("fs");
 
 process.on("unhandledRejection", (err) => {
@@ -66,6 +66,7 @@ const convertMessagesToInputs = (messages) => {
 
 app.post("/v1/chat/completions", async (req, res) => {
   const { messages, stream = false, model, max_tokens = 1000 } = req.body;
+  console.log("Request body: ", req.body);
   if (!model) {
     res.status(400).json({ error: "Model is required." });
     return;
@@ -311,6 +312,11 @@ app.post("/v1/completions", async (req, res) => {
     res.json(openaiData);
   }
 });
+
+app.all('*', (req, res) => {
+  console.log(req.body)
+  res.status(200).send('ok');
+})
 
 app.listen(port, () => {
   console.log(

@@ -1,7 +1,6 @@
-# 非标大语言模型接口转 OpenAI 标准接口
-
-此项目用于解决一些非标的大语言模型接口，统一转换成 OpenAI 兼容的标准接口。
+# 大语言模型工具箱
 
 ## 目录
 
-- [MindSpore](./mindspore/README.md)
+- [MindSpore 非标大语言模型接口转 OpenAI 标准接口](./mindspore/README.md)
+- [多大语言模型聚合服务](./aggregated-llm-server/README.md)

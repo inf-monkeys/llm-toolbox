@@ -1,6 +1,8 @@
 
 # Mindspore
 
+将使用 Mindspore 部署的非标大语言模型接口，统一转换成 OpenAI 兼容的标准接口。
+
 **查看[Mock Server 代码](./mindspore/mock-mindspore-server.js)**
 
 ## 快速开始
@@ -10,7 +12,7 @@
 1. 克隆仓库
    
    ```sh
-   git clone https://github.com/inf-monkeys/none-standard-llm-openai-compatible-server.git
+   git clone https://github.com/inf-monkeys/llm-toolbox.git
    ```
 
 2. 切换到 `mindspore` 目录
@@ -44,7 +46,7 @@
 1. 克隆仓库
    
    ```sh
-   git clone https://github.com/inf-monkeys/none-standard-llm-openai-compatible-server.git
+   git clone https://github.com/inf-monkeys/llm-toolbox.git
    ```
 
 2. 切换到 `mindspore` 目录
